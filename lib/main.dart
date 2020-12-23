@@ -145,12 +145,24 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final PreferredSizeWidget appBar = Platform.isIOS
-        ? CupertinoNavigationBar(
+  Widget _buildMaterialAppbar() {
+    return AppBar(
+      title: Text('Personal Expenses',
+          style: TextStyle(
+            fontFamily: 'Open Sans',
+          )),
+      actions: [
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              return _startAddNewTransaction(context);
+            })
+      ],
+    );
+  }
+
+  Widget _buildCupertinoNavigationBar() {
+    return CupertinoNavigationBar(
             middle: Text('Personal Expenses',
                 style: TextStyle(
                   fontFamily: 'Open Sans',
@@ -164,20 +176,16 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 )
               ],
             ),
-          )
-        : AppBar(
-            title: Text('Personal Expenses',
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                )),
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    return _startAddNewTransaction(context);
-                  })
-            ],
           );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? _buildCupertinoNavigationBar()
+        : _buildMaterialAppbar();
     final txListWidget = Container(
         height: (mediaQuery.size.height -
                 appBar.preferredSize.height -

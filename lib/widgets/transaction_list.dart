@@ -1,6 +1,6 @@
+import './transaction_item.dart';
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
-import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -8,52 +8,34 @@ class TransactionList extends StatelessWidget {
   TransactionList(this.transactions, this.deteleTx);
   @override
   Widget build(BuildContext context) {
-    return  transactions.isEmpty
-          ? Column(
+    return transactions.isEmpty
+        ? LayoutBuilder(builder: (ctx, constraints) {
+            return Column(
               children: [
                 Text(
                   'No transactions added yet!',
                   style: Theme.of(context).textTheme.headline6,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 70,
                 ),
                 Container(
-                    height: 100,
+                    height: constraints.maxHeight * 0.6,
                     child: Image.asset(
                       'assets/images/flutterSym.png',
                       fit: BoxFit.cover,
                     ))
               ],
-            )
-          : ListView.builder(
-              itemBuilder: (ctx, index) {
-                return Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                          padding: EdgeInsets.all(6),
-                          child: FittedBox(
-                              child: Text('\$${transactions[index].amount}'))),
-                    ),
-                    title: Text(
-                      transactions[index].title,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    subtitle: Text(
-                        DateFormat.yMMMd().format(transactions[index].date)),
-                    trailing: IconButton(
-                      onPressed: () => deteleTx(transactions[index].id),
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                    ),
-                  ),
-                );
-              },
-              itemCount: transactions.length,
-    );
+            );
+          })
+        : ListView(children:
+               transactions.map((tx) => TransactionItem(
+                key: ValueKey(tx.id),
+                transaction: tx,
+                 deteleTx: deteleTx
+                 )).toList()
+                 );
   }
 }
+
+
